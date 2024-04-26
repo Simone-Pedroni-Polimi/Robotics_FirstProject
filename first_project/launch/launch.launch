@@ -9,13 +9,13 @@
  
  
   <group ns="group_wheel_odom">
- 	<node pkg="first_project" name="pra" type="pra" output="screen">
+ 	<node pkg="first_project" name="odom_to_tf" type="odom_to_tf" output="screen">
  		<param name="input_odom" value="/odom" />
  	</node>
  </group>
  
  <group ns="group_gps_odom">
- 	<node pkg="first_project" name="pra" type="pra" output="screen">
+ 	<node pkg="first_project" name="odom_to_tf" type="odom_to_tf" output="screen">
  		<param name="input_odom" value="/gps_odom" />
  	</node>
  </group>

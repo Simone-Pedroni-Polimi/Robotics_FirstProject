@@ -4,22 +4,23 @@
 #include "nav_msgs/Odometry.h"
 #include <cmath>
 #include <tf/transform_broadcaster.h>
+#include <sstream>
+#include <string>
 
 std::string param;
-tf::TransformBroadcaster br;
-    std_msgs::String local_msg;
-    tf::Transform transform;
+std_msgs::String local_msg;
+std::string local_name_from_global;
 
-    
-/*
 class odom_to_tf{
-
 public:
-
-    odom_to_tf(){
-        n.getParam("/input_odom", param);
-        sub = n.subscribe(param->data, 1000, &odom_to_tf::callback, this);
+    odom_to_tf(ros::NodeHandle n){
+        local_msg.data = local_name_from_global;;
+        //if(local_msg.data == "/odom")
+        sub = n.subscribe(local_msg.data, 1000, &odom_to_tf::callback, this);
+        ROS_INFO("I heard: [%s]\n", local_msg.data.c_str());
     }
+
+
 
     void callback(const nav_msgs::Odometry::ConstPtr& msg){
         tf::Transform transform;
@@ -27,43 +28,24 @@ public:
         tf::Quaternion q;
         q.setRPY(msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, 0);
         transform.setRotation(q);
-        if(param.data.c_str() == "/odom")
+        if(local_msg.data == "/odom")
             br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "wheel_odom"));
         else br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "gps_odom"));
     }
 
 private:
-    ros::NodeHandle n;
     tf::TransformBroadcaster br;
     ros::Subscriber sub;
 };
 
-*/
-
-
-void callback(const nav_msgs::Odometry::ConstPtr& msg){
-        /*transform.setOrigin( tf::Vector3(msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z) );
-        tf::Quaternion q;
-        q.setRPY(msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, 0);
-        transform.setRotation(q);
-        if(local_msg.data == "/odom")
-            br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "wheel_odom"));
-        else br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "gps_odom"));
-    */}
-
-
 int main(int argc, char **argv){
     ros::init(argc, argv, "odom_to_tf");
     ros::NodeHandle n;
-    ros::Subscriber sub;
-    //odom_to_tf my_odom_to_tf;
-
-    n.getParam("/input_odom", param);
-    local_msg.data = param;
-    sub = n.subscribe(local_msg.data, 1000, callback);
-
-
+    ros::NodeHandle nh_private("~");
+    std::string param_name = ros::this_node::getName() + "/input_odom";
+    n.getParam(param_name, local_name_from_global);
+    //nh_private.getParam("input_odom", param);
+    odom_to_tf my_odom_to_tf(n);
     ros::spin();
-
     return 0;
 }
