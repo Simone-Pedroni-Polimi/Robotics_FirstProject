@@ -11,12 +11,16 @@
   <group ns="group_wheel_odom">
  	<node pkg="first_project" name="odom_to_tf" type="odom_to_tf" output="screen">
  		<param name="input_odom" value="/odom" />
+ 		<param name="root_frame" value="world" />
+ 		<param name="child_frame" value="wheel_odom" />
  	</node>
  </group>
  
  <group ns="group_gps_odom">
  	<node pkg="first_project" name="odom_to_tf" type="odom_to_tf" output="screen">
  		<param name="input_odom" value="/gps_odom" />
+ 		<param name="root_frame" value="world" />
+        <param name="child_frame" value="gps_odom"/>
  	</node>
  </group>
 

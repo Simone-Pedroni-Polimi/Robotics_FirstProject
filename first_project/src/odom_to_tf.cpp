@@ -8,16 +8,18 @@
 #include <string>
 
 std::string param;
-std_msgs::String local_msg;
-std::string local_name_from_global;
+std_msgs::String local_msg1;
+std_msgs::String local_msg2;
+std::string local_input_odom;
+std::string local_root_frame;
+std::string local_child_frame;
 
 class odom_to_tf{
 public:
     odom_to_tf(ros::NodeHandle n){
-        local_msg.data = local_name_from_global;;
-        //if(local_msg.data == "/odom")
-        sub = n.subscribe(local_msg.data, 1000, &odom_to_tf::callback, this);
-        ROS_INFO("I heard: [%s]\n", local_msg.data.c_str());
+        local_msg1.data = local_input_odom;
+        sub = n.subscribe(local_msg1.data, 1000, &odom_to_tf::callback, this);
+        ROS_INFO("I heard: [%s]\n", local_msg1.data.c_str());
     }
 
 
@@ -26,11 +28,11 @@ public:
         tf::Transform transform;
         transform.setOrigin( tf::Vector3(msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z) );
         tf::Quaternion q;
-        q.setRPY(msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, 0);
+        q.setRPY(0, 0, msg->pose.pose.orientation.w);
         transform.setRotation(q);
-        if(local_msg.data == "/odom")
-            br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "wheel_odom"));
-        else br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "gps_odom"));
+        local_msg1.data = local_root_frame;
+        local_msg2.data = local_child_frame;
+        br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), local_msg1.data, local_msg2.data));
     }
 
 private:
@@ -42,9 +44,15 @@ int main(int argc, char **argv){
     ros::init(argc, argv, "odom_to_tf");
     ros::NodeHandle n;
     ros::NodeHandle nh_private("~");
-    std::string param_name = ros::this_node::getName() + "/input_odom";
-    n.getParam(param_name, local_name_from_global);
-    //nh_private.getParam("input_odom", param);
+
+    std::string input_odom = ros::this_node::getName() + "/input_odom";
+    std::string root_frame = ros::this_node::getName() + "/root_frame";
+    std::string child_frame = ros::this_node::getName() + "/child_frame";
+
+    n.getParam(input_odom, local_input_odom);
+    n.getParam(root_frame, local_root_frame);
+    n.getParam(child_frame, local_child_frame);
+
     odom_to_tf my_odom_to_tf(n);
     ros::spin();
     return 0;

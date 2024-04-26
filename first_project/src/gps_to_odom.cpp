@@ -67,8 +67,7 @@ void pubCallback(const sensor_msgs::NavSatFix::ConstPtr& msg) {
     odom_msg.pose.pose.position.x = x;
     odom_msg.pose.pose.position.y = y;
     odom_msg.pose.pose.position.z = z;
-    odom_msg.pose.pose.orientation.x = angle_xy;
-    odom_msg.pose.pose.orientation.y = angle_xz;
+    odom_msg.pose.pose.orientation.w = angle_xy;
 
     ROS_INFO("I heard x: [%lf]\n", x);
     ROS_INFO("I heard odom x: [%lf]\n", odom_msg.pose.pose.position.x);
