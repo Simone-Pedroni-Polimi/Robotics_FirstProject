@@ -43,7 +43,13 @@ void pubCallback(const sensor_msgs::NavSatFix::ConstPtr& msg) {
 
     double x = -sin(lon_rel)*X_matrix + cos(lon_rel)*Y_matrix;
     double y = -sin(lat_rel)*cos(lon_rel)*X_matrix - sin(lat_rel)*sin(lon_rel)*Y_matrix + cos(lat_rel)*Z_matrix;
-    double z = cos(lon_rel)*cos(lat_rel)*X_matrix + cos(lat_rel)*sin(lon_rel)*Y_matrix + sin(lat_rel)*Z_matrix; 
+    double z = cos(lon_rel)*cos(lat_rel)*X_matrix + cos(lat_rel)*sin(lon_rel)*Y_matrix + sin(lat_rel)*Z_matrix;
+
+    //correzione di 130 gradi
+    double alfa= atan2(y,x);
+    double dist= sqrt(pow(x,2)+pow(y,2));
+    x=dist*sin(alfa-135*M_PI/180);
+    y=dist*cos(alfa-135*M_PI/180);
 
     double dist_xy = sqrt(pow(x - x_old, 2) + pow(y - y_old, 2));
     double dist_xz = sqrt(pow(x - x_old, 2) + pow(z - z_old, 2));

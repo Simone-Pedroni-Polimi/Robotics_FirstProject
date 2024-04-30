@@ -20,14 +20,14 @@ void subCallback(const sensor_msgs::PointCloud2::ConstPtr& msg) {
         lidar_msg.header.frame_id = "wheel_odom";
     else lidar_msg.header.frame_id = "gps_odom";
 
-    /*lidar_msg.height = msg->height;
+    lidar_msg.height = msg->height;
     lidar_msg.width = msg->width;
     lidar_msg.fields = msg->fields;
     lidar_msg.is_bigendian = msg->is_bigendian;
     lidar_msg.point_step = msg->point_step;
     lidar_msg.row_step = msg->row_step;
     lidar_msg.data = msg->data;
-    lidar_msg.is_dense = msg->is_dense;*/
+    lidar_msg.is_dense = msg->is_dense;
 
     odom_pub.publish(lidar_msg);
 }
