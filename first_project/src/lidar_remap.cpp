@@ -6,16 +6,15 @@
 bool odomFrame = true;
 ros::Publisher odom_pub;
 
-void callback(first_project::odomConfig &config) {
+void serverCallback(first_project::odomConfig &config) {
   odomFrame = config.odom_param;
-  ROS_INFO("Reconfigure Request: %s", 
-            odomFrame?"True":"False");
 }
 
 
 void subCallback(const sensor_msgs::PointCloud2::ConstPtr& msg) {
     sensor_msgs::PointCloud2 lidar_msg;
     lidar_msg.header = msg->header;
+
     if(odomFrame)
         lidar_msg.header.frame_id = "wheel_odom";
     else lidar_msg.header.frame_id = "gps_odom";
@@ -42,10 +41,9 @@ int main(int argc, char **argv) {
   dynamic_reconfigure::Server<first_project::odomConfig> server;
   dynamic_reconfigure::Server<first_project::odomConfig>::CallbackType f;
 
-  f = boost::bind(&callback, _1);
+  f = boost::bind(&serverCallback, _1);
   server.setCallback(f);
 
-  //ROS_INFO("Spinning node");
   ros::spin();
   return 0;
 }

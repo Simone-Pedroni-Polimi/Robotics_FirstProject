@@ -19,17 +19,14 @@ public:
     odom_to_tf(ros::NodeHandle n){
         local_msg1.data = local_input_odom;
         sub = n.subscribe(local_msg1.data, 1000, &odom_to_tf::callback, this);
-        ROS_INFO("I heard: [%s]\n", local_msg1.data.c_str());
     }
-
-
 
     void callback(const nav_msgs::Odometry::ConstPtr& msg){
         tf::Transform transform;
         transform.setOrigin( tf::Vector3(msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z) );
-        tf::Quaternion q;
-        q.setRPY(0, 0, msg->pose.pose.orientation.w);
+        tf::Quaternion q(msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
         transform.setRotation(q);
+
         local_msg1.data = local_root_frame;
         local_msg2.data = local_child_frame;
         br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), local_msg1.data, local_msg2.data));
