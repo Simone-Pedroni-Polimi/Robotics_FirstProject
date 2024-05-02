@@ -24,7 +24,7 @@
  	</node>
  </group>
  
-  <node pkg="first_project" name="lidar_remap" type="lidar_remap" output="screen">
+  <node pkg="first_project" name="lidar_remap" type="lidar_remap">
  </node>
 
 </launch>
